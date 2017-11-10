@@ -38,13 +38,30 @@ class ARViewController: UIViewController {
     }
     
     @IBAction func resetAction(_ sender: UIButton) {
-        
+        reset()
     }
     
     func addHandler() {
         if planeAnchor != nil {
             addPortal(with: planeAnchor!.transform)
         }
+    }
+    
+    func reset() {
+        // 清除节点之前先停止AR会话，否则会crash
+        // pause ar session before remove node, or will be crash
+        self.sceneView.session.pause()
+        
+        self.sceneView.scene.rootNode.enumerateChildNodes { (node, _) in
+            node.removeFromParentNode()
+        }
+        
+        self.planeAnchor = nil
+        self.addButton.isEnabled = false
+        
+        // 使用重置配置启动AR会话，场景将会被重置
+        // Run AR session with reset options, then session will be reset
+        self.sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
     }
     
 }
@@ -67,7 +84,7 @@ extension ARViewController {
         self.addPlane(nodeName: "roof", portalNode: portalNode, imageName: "top")
         self.addPlane(nodeName: "floor", portalNode: portalNode, imageName: "bottom")
         self.addWalls(nodeName: "backWall", portalNode: portalNode, imageName: "back")
-        self.addWalls(nodeName: "sideWallA", portalNode: portalNode, imageName: "sideA")
+        self.addWalls(nodeName: "sideWallA", portalNode: portalNode, imageName: "sideA")
         self.addWalls(nodeName: "sideWallB", portalNode: portalNode, imageName: "sideB")
         self.addWalls(nodeName: "sideDoorA", portalNode: portalNode, imageName: "sideDoorA")
         self.addWalls(nodeName: "sideDoorB", portalNode: portalNode, imageName: "sideDoorB")
@@ -110,13 +127,13 @@ extension ARViewController: ARSCNViewDelegate {
         // Judge the plane if it is horizontal plane
         guard anchor is ARPlaneAnchor else {return}
         
-        self.planeAnchor = anchor as! ARPlaneAnchor
-        
         // 不是第一次检测到，直接返回
         // Not the first time detected, so return directlly
         if self.planeAnchor != nil {
             return
         }
+        
+        self.planeAnchor = anchor as? ARPlaneAnchor
         
         // 启用放置按钮, 显示可放置标签
         // Enable Add Button, and make remind label visiable.
