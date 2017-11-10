@@ -25,9 +25,9 @@ extension SCNVector3 {
     
     init (withNode node: SCNNode) {
         let transform = node.transform
-        let oritation = SCNVector3(-transform.m31, -transform.m32, -transform.m33)
+        let orientation = SCNVector3(-transform.m31, -transform.m32, -transform.m33)
         let location = SCNVector3(transform.m41, transform.m42, transform.m43)
-        let currentPosition = oritation + location
+        let currentPosition = orientation + location
         
         self = currentPosition
     }

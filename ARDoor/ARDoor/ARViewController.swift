@@ -76,7 +76,6 @@ extension ARViewController {
     func addPortal(with transform: matrix_float4x4) {
         guard let portalScene = SCNScene(named: "Model.scnassets/tjgc.scn") else {return}
         let portalNode = portalScene.rootNode.childNode(withName: "tjgc", recursively: false)!
-        // hit test
         let newVector3 = SCNVector3.init(withTransform: transform)
         portalNode.position = SCNVector3.init(newVector3.x, newVector3.y, newVector3.z-1)
         sceneView.scene.rootNode.addChildNode(portalNode)
@@ -126,12 +125,6 @@ extension ARViewController: ARSCNViewDelegate {
         // 如果检测到的是水平面，那么就是我们需要的，所以在此判断是否为水平面
         // Judge the plane if it is horizontal plane
         guard anchor is ARPlaneAnchor else {return}
-        
-        // 不是第一次检测到，直接返回
-        // Not the first time detected, so return directlly
-        if self.planeAnchor != nil {
-            return
-        }
         
         self.planeAnchor = anchor as? ARPlaneAnchor
         
